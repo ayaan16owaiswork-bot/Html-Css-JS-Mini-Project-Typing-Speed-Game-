@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Typing Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Typing Speed Test</h1>
+
+        <div id="targetTXT-display">Loading quote...</div>
+
+        <textarea id="targetTXT-input" rows="3" placeholder="Start typing here..."></textarea>
+
+        <button id="restart-btn">Restart</button>
+    </div>
+
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <h2>Finished!</h2>
+            <p>Your speed: <span id="modal-wpm" style="font-weight:bold; font-size:1.2em;">0</span> WPM</p>
+            <button id="modal-close-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById("targetTXT-display");
+        const input = document.getElementById("targetTXT-input");
+        const btn = document.getElementById("restart-btn");
+
+        const modal = document.getElementById("result-modal");
+        const modalWpm = document.getElementById("modal-wpm");
+        const modalBtn = document.getElementById("modal-close-btn");
+
+        const targetTXT = [
+            "The only way to do great work is to love what you do.",
+            "A better way to solve problems is to think of what you know.",
+            "The best time for new beginnings is found within today.",
+            "My only goal for the evening is to find a decent meal.",
+            "A lonely life on the ocean is how the old man has lived.",
+            "Consistency is the key to achieving any goal you set.",
+            "His clever plan to escape was never going to truly succeed",
+            "Done is better than perfect, just ship the product.",
+            "The journey of a thousand miles begins with a single step."
+        ];
+
+        let startTime;
+
+        function startGame() {
+            modal.style.display = "none";
+
+            const randomIndex = Math.floor(Math.random() * targetTXT.length);
+            display.innerText = targetTXT[randomIndex];
+
+            display.style.backgroundColor = "#ecf0f1";
+            input.style.backgroundColor = "white";
+
+            input.value = "";
+            input.disabled = false;
+            input.focus();
+
+            startTime = null;
+        }
+
+        input.oninput = function () {
+            const currentTXT = display.innerText;
+            const typedTXT = input.value;
+
+            if (startTime === null) {
+                startTime = new Date();
+            }
+
+            if (currentTXT.startsWith(typedTXT)) {
+                input.style.backgroundColor = "#69f76977";
+                display.style.backgroundColor = "#69f7697c";
+            } else {
+                input.style.backgroundColor = "#ffdddd";
+                display.style.backgroundColor = "#ffdddd";
+            }
+
+            if (typedTXT === currentTXT) {
+                endGame();
+            }
+        };
+
+        function endGame() {
+            const endTime = new Date();
+            const timeTakenInSeconds = (endTime - startTime) / 1000;
+            const timeTakenInMinutes = timeTakenInSeconds / 60;
+
+            const wordCount = input.value.split(" ").length;
+
+            let speed = Math.round(wordCount / timeTakenInMinutes);
+
+            if (isNaN(speed) || !isFinite(speed)) speed = 0;
+
+            input.disabled = true;
+
+            modalWpm.innerText = speed;
+            modal.style.display = "flex";
+        }
+
+        btn.onclick = startGame;
+        modalBtn.onclick = startGame;
+
+        startGame();
+
+    </script>
+
+</body>
+
+</html>
